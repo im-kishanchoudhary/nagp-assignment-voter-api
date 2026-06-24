@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: voter-api-config
+  namespace: voter
+data:
+  ASPNETCORE_ENVIRONMENT: Production

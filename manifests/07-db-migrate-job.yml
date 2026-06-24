@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: voter-db-migrate
+  namespace: voter
+spec:
+  backoffLimit: 5
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app: voter-db-migrate
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: kishanchoudhary/voter-api:v1
+          imagePullPolicy: Always
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              if [ ! -x ./efbundle ]; then
+                echo "ERROR: /app/efbundle is missing from this image."
+                echo "Rebuild and push the image so it includes the EF migration bundle."
+                exit 1
+              fi
+              CONN="Host=$DB_HOST;Port=$DB_PORT;Database=$DB_NAME;Username=$DB_USER;Password=$DB_PASSWORD"
+              for i in $(seq 1 60); do
+                ./efbundle --connection "$CONN" && exit 0
+                echo "Database not ready yet, retrying ($i/60)..."
+                sleep 3
+              done
+              echo "Migration failed after repeated attempts."
+              exit 1
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: voter-db-connection
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: voter-db-connection
+                  key: DB_PORT
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: voter-db-connection
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: voter-db-connection
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: voter-db-secret
+                  key: POSTGRES_PASSWORD

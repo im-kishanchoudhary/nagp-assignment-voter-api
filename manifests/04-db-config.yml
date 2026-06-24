@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: voter-db-connection
+  namespace: voter
+data:
+  DB_HOST: voter-db-0.voter-db-service
+  DB_PORT: "5432"
+  DB_NAME: voterdb
+  DB_USER: voter
