@@ -9,7 +9,6 @@ its own health, and tags every response with the pod and node that handled the r
 - GitHub Repository: `https://github.com/im-kishanchoudhary/nagp-assignment-voter-api`
 - Docker Image: `docker.io/kishanchoudhary/voter-api`
 - API URL: `http://136.116.106.91/api/voters`
-- Video URL: `https://nagarro-my.sharepoint.com/:v:/p/kishan_choudhary/IQB2pjXQd8-OQYw3mzkuNhYaASsJxiQykgqwoIyBe196xZw?e=Sfkcg5`
 
 ## Project Structure
 
